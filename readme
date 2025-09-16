@@ -1,0 +1,35 @@
+# Carte d'anniversaire pour Mia
+
+Ce projet est une carte d'anniversaire interactive et personnalisée, conçue pour offrir une expérience joyeuse et originale à Mia.
+
+## Fonctionnalités
+
+- **Bouton surprise** : Un bouton central déclenche l'affichage d'un message d'anniversaire personnalisé.
+- **Effets visuels** : Animation de confettis et effet de machine à écrire pour le texte.
+- **Design responsive** : Adapté aux mobiles et tablettes.
+- **Message humoristique et affectueux** : Texte écrit avec humour et affection.
+
+## Utilisation
+
+1. Ouvre le fichier `Carte d'anniversaire pour Mia.html` dans ton navigateur.
+2. Clique sur le bouton "Appuie-moi ✨" pour révéler le message et les confettis.
+
+## Personnalisation
+
+- Pour modifier le message, édite la variable `message` dans le script du fichier HTML.
+- Les couleurs et polices peuvent être ajustées dans la section `<style>`.
+
+## Structure du projet
+
+```
+Carte d'anniversaire pour Mia.html   # Page principale de la carte
+readme                              # Ce fichier d'explications
+```
+
+## Auteur
+
+- Créé par Mohamed pour Mia, avec beaucoup d'affection.
+
+## Licence
+
+Usage personnel et non commercial
