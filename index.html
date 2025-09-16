@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Carte d'anniversaire interactive pour Mia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#FBF7FB;
+      --card:#fff;
+      --accent:#f6c1d9;
+      --accent-2:#cdb3f0;
+      --text:#222;
+      --muted:#6b6b6b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; background:linear-gradient(180deg,var(--bg),#fff); color:var(--text)}
+
+    .wrap{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:40px;
+    }
+
+    .card{
+      width:920px;
+      max-width:96%;
+      background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+      border-radius:22px;
+      padding:64px 48px;
+      box-shadow:0 10px 40px rgba(140,100,140,0.08), inset 0 1px 0 rgba(255,255,255,0.6);
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    h1.title{font-weight:800;letter-spacing:-0.6px;margin:0 0 18px;font-size:34px}
+    p.lead{margin:0 0 28px;color:var(--muted)}
+
+    .glow-btn{
+      display:inline-block;
+      padding:20px 44px;
+      font-weight:800;
+      font-size:18px;
+      border-radius:14px;
+      border:none;
+      cursor:pointer;
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:#fff;
+      box-shadow:0 6px 30px rgba(197,120,180,0.28), 0 0 40px rgba(205,179,240,0.32);
+      text-transform:uppercase;
+      letter-spacing:1px;
+      transition:transform 220ms cubic-bezier(.2,.9,.3,1), box-shadow 220ms;
+      position:relative;
+    }
+    .glow-btn:active{transform:translateY(2px) scale(.995)}
+    .glow-btn:hover{box-shadow:0 10px 48px rgba(197,120,180,0.38), 0 0 60px rgba(205,179,240,0.45)}
+
+    .card::before{
+      content:"";
+      position:absolute;left:-20%;top:-30%;width:160%;height:160%;
+      background:radial-gradient(circle at 20% 30%, rgba(246,193,217,0.14), transparent 12%), radial-gradient(circle at 80% 70%, rgba(205,179,240,0.12), transparent 12%);
+      transform:rotate(8deg);
+      pointer-events:none;
+    }
+
+    .messageWrap{
+      margin-top:26px;
+      text-align:left;
+      max-width:720px;
+      margin-left:auto;margin-right:auto;
+      display:none;
+    }
+
+    .message{
+      background:linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6));
+      border-radius:14px;padding:22px 22px;box-shadow:0 6px 30px rgba(100,70,120,0.06);
+    }
+
+    .happy{font-size:28px;font-weight:800;margin:0 0 8px;color:#b44b93;text-align:center}
+    .typed{font-size:16px;color:#333;line-height:1.55;min-height:88px;white-space:pre-wrap}
+
+    .small-muted{font-size:13px;color:var(--muted);text-align:center;margin-top:12px}
+
+    .confetti{
+      position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:hidden;
+    }
+    .confetti i{position:absolute;font-style:normal;opacity:0;transform:translateY(-10px) rotate(0deg); animation:drop 1600ms linear forwards}
+    @keyframes drop{to{opacity:1;transform:translateY(110vh) rotate(360deg)}}
+
+    @media (max-width:600px){
+      .card{padding:36px 18px;border-radius:18px}
+      .glow-btn{padding:18px 32px;font-size:18px}
+      h1.title{font-size:24px}
+      .happy{font-size:24px}
+      .typed{font-size:17px;min-height:110px}
+    }
+
+    @media (max-width:400px){
+      .glow-btn{padding:14px 24px;font-size:16px}
+      h1.title{font-size:20px}
+      .happy{font-size:20px}
+      .typed{font-size:15px;min-height:90px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" role="main">
+      <h1 class="title">Une petite surprise ✨</h1>
+      <p class="lead">Clique sur le bouton au centre — promets-moi juste de sourire en le lisant.</p>
+
+      <div style="display:flex;justify-content:center;">
+        <button class="glow-btn" id="surpriseBtn" aria-label="Afficher le message d'anniversaire">Appuie-moi ✨</button>
+      </div>
+
+      <div class="messageWrap" id="messageWrap">
+        <div class="message">
+          <div class="happy">Joyeux anniversaire ! 🎉</div>
+          <div class="typed" id="typedText" aria-live="polite"></div>
+        </div>
+        <div class="small-muted">(Un message écrit avec un peu d'humour, beaucoup d'affection et zéro filtre.)</div>
+      </div>
+
+      <div class="confetti" id="confetti"></div>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('surpriseBtn');
+    const wrap = document.getElementById('messageWrap');
+    const typedEl = document.getElementById('typedText');
+    const confettiRoot = document.getElementById('confetti');
+
+    const message = `Salut toi !
+
+Aujourd'hui c'est ton jour — alors bravo, ça fait une année de plus que tu vis, ça se fait non ? 😄
+
+Je te souhaite une journée douce, pleine de petites folies et de gâteaux volants (ou pas). Je suis sincèrement fier de toi : de qui tu es, de ce que tu deviens et de toutes les petites victoires invisibles que tu accomplis chaque jour.
+
+Reste toi-même, continue d'oser, et n'oublie pas : tu mérites tout le bonheur du monde (oui, même d'une invasion de licornes roses dans ton salon).
+
+Gros bisous, et encore joyeux anniversaire — t'es incroyable. 💫`;
+
+    function typeWriter(el, text, speed=20, cb){
+      let i=0;
+      el.textContent='';
+      const id = setInterval(()=>{
+        el.textContent += text.charAt(i);
+        i++;
+        el.scrollTop = el.scrollHeight;
+        if(i>=text.length){clearInterval(id); if(cb) cb();}
+      }, speed);
+    }
+
+    function popConfetti(){
+      const emoji = ['🎉','✨','💖','🎂','🥳','🌸'];
+      for(let i=0;i<18;i++){
+        const el = document.createElement('i');
+        el.textContent = emoji[Math.floor(Math.random()*emoji.length)];
+        el.style.left = Math.random()*100 + '%';
+        el.style.fontSize = (12 + Math.random()*28) + 'px';
+        el.style.top = (-10 - Math.random()*20) + 'vh';
+        el.style.opacity = Math.random();
+        el.style.transform = `translateY(-10px) rotate(${Math.random()*360}deg)`;
+        el.style.animationDelay = (Math.random()*300) + 'ms';
+        confettiRoot.appendChild(el);
+        setTimeout(()=> el.remove(), 2200);
+      }
+    }
+
+    let clicked = false;
+    btn.addEventListener('click', ()=>{
+      if(clicked) return; clicked = true;
+      wrap.style.display = 'block';
+      btn.disabled = true; // Désactive le bouton après le clic
+      btn.animate([
+        {transform:'scale(1)', boxShadow:'0 6px 30px rgba(197,120,180,0.28), 0 0 40px rgba(205,179,240,0.32)'},
+        {transform:'scale(1.06)', boxShadow:'0 12px 60px rgba(197,120,180,0.42), 0 0 80px rgba(205,179,240,0.5)'},
+        {transform:'scale(1)', boxShadow:'0 6px 30px rgba(197,120,180,0.28), 0 0 40px rgba(205,179,240,0.32)'}
+      ],{duration:900,iterations:1,easing:'cubic-bezier(.2,.9,.3,1)'});
+      popConfetti();
+      setTimeout(()=>{ typeWriter(typedEl, message, 16, ()=>{ setTimeout(popConfetti, 300); }); }, 340);
+      btn.textContent = "Fait ✨";
+    });
+
+    btn.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') btn.click(); });
+  </script>
+</body>
+</html>
